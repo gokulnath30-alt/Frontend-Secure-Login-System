@@ -1,13 +1,9 @@
 import axios from "axios";
 
-let rawBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8081/api";
-rawBaseUrl = rawBaseUrl.trim().replace(/\/+$/, "");
-if (!rawBaseUrl.endsWith("/api")) {
-  rawBaseUrl += "/api";
-}
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8081/api";
 
 const axiosClient = axios.create({
-  baseURL: rawBaseUrl,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -27,7 +23,7 @@ axiosClient.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+      if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
     }
