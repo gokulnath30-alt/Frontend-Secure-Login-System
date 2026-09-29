@@ -26,11 +26,17 @@ export default function Register() {
       setSuccess(true);
       setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
+      console.error("Registration error:", err);
       const data = err.response?.data;
       if (data && typeof data === "object" && !data.message) {
         setFieldErrors(data);
+      } else if (data?.message) {
+        setError(data.message);
+      } else if (err.code === "ERR_NETWORK" || !err.response) {
+        const targetUrl = err.config?.baseURL || "backend";
+        setError(`Unable to connect to backend at ${targetUrl}. Please ensure your backend is running and CORS is enabled.`);
       } else {
-        setError(data?.message || "Registration failed");
+        setError(err.message || "Registration failed");
       }
     } finally {
       setLoading(false);

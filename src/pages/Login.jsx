@@ -24,7 +24,15 @@ export default function Login() {
       await login(form);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid username or password");
+      console.error("Login error:", err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.code === "ERR_NETWORK" || !err.response) {
+        const targetUrl = err.config?.baseURL || "backend";
+        setError(`Unable to connect to backend at ${targetUrl}. Please ensure your backend is running.`);
+      } else {
+        setError("Invalid username or password");
+      }
     } finally {
       setLoading(false);
     }
